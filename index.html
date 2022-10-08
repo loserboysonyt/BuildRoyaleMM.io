@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.4.0/fabric.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta property="og:description" content="Build Royale.io 2D map Maker, Create custom build royale maps">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <script type="text/javascript" src="./main.js" defer> </script>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body style="background-color: #274b0a;">
+    <canvas id="c" width="600" height="600"></canvas>
+    <div id="creation" class="menu border">
+        <span class="menu-title">Creation Details</span>
+        <br>
+        <div class="menu-info">
+            <span class="title">Building Name</span>
+            <input id="bname" class="input" type="text" placeholder="Build Name" value="unnamed">
+            <br>
+            <span class="title">Canvas Dimensions</span>
+            <span style="display: flex; align-items: center;">
+                <input style="width: 50px;" id="cw" class="input" type="number" placeholder="Width" value="600">W
+                <input style="width: 50px;" id="ch" class="input" type="number" placeholder="Heght" value="600">H
+            </span>
+            <br>
+            <span class="title">Grid Size <input id="bgrid" style="width: 30px;" class="input" type="number"
+                    placeholder="Size" value="50"></span>
+            <br>
+            <button id="create" class="button">Create Structure</button>
+            <br>
+            <button id="importwimg" class="button">Create From Reference</button>
+            <br>
+            <button id="import" class="button">Import JSON</button>
+        </div>
+    </div>
+    <div id="editor" class="menu border">
+        <span class="menu-title">Editor</span>
+        <div class="menu-info">
+            <button class="collapsible open">Shapes</button>
+            <div class="content cflex">
+                <button class="button" id="addSquare">Add Rectangle</button>
+            </div>
+            <button class="collapsible open">Props</button>
+            <div id="propHeightHolder" class="content cflex">
+                <div>
+                    <input id="cPropName" class="input" style="width: 70px; margin: 7px 0px 0px 5px;" type="text"
+                        placeholder="Prop Name">
+                    <input id="cPropUrl" class="input" style="width: 100px; margin: 7px 0px 0px 0px;" type="text"
+                        placeholder="Prop Image URL">
+                    <button id="addCurrentProp" style="width: 40px; margin: 7px 0px 0px 0px;"
+                        class="sbutton">Add</button>
+                    <button onclick="getElem('cPropName').value = ''; getElem('cPropUrl').value = '';"
+                        style="width: 26px; margin: 7px 5px 0px 0px;" class="sbutton">X</button>
+                </div>
+                <span class="bspan">Loaded Props</span>
+                <div id="propTypeHolder" style="width: 100%;">
+                </div>
+            </div>
+            <button class="collapsible open">Exporting</button>
+            <div class="content cflex">
+                <span class="bspan">
+                    <input id="center" type="checkbox" checked>
+                    Relative to center?
+                </span>
+                <span class="bspan">
+                    <input id="sizegrid" type="checkbox" checked>
+                    Size relative to grid?
+                </span>
+                <span class="bspan">
+                    <input id="groupcoords" type="checkbox" checked>
+                    Group coordinates?
+                </span>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <button class="sbutton" id="exportjson">Export JSON</button>
+                    <button class="sbutton" id="exportpng">Export PNG</button>
+                    <span class="title">Latest JSON Export</span>
+                    <textarea disabled id="exported" class="export" cols="30" rows="10"></textarea>
+                </div>
+                <button class="button"
+                    onclick="navigator.clipboard.writeText(document.getElementById('exported').value)">Copy
+                    to
+                    clipboard</button>
+            </div>
+            <!--
+            <div class="menu">
+                <span class="title">Reference Image</span>
+                <span class="title">Bring reference</span>
+                <div>
+                    <button class="button" style="width: 80px; height: 30px;"
+                        onclick="if (bgImage) bgImage.bringForward()">Forwards</button>
+                    <button class="button" style="width: 80px; height: 30px;"
+                        onclick="if (bgImage) bgImage.sendBackwards()">Backwards</button>
+                </div>
+                <span><a href="https://postimages.org/" target="_blank">Upload a reference</a></span>
+                <button class="button" id="importbg">Import Reference</button>
+                <button class="button" id="removebg">Remove Reference</button>
+            </div>-->
+        </div>
+    </div>
+    <div id="config" class="menu border">
+        <span class="menu-title">Settings</span>
+        <div class="menu-info">
+            <button class="collapsible open">Defaults</button>
+            <div class="content cflex">
+                <span class="bspan">Default Dimensions</span>
+                <span style="display: flex; align-items: center;">
+                    <input style="width: 50px;" id="sett_cWidth" class="input" type="number" placeholder="Width"
+                        value="600">W
+                    <input style="width: 50px;" id="sett_cHeight" class="input" type="number" placeholder="Heght"
+                        value="600">H
+                </span>
+                <span class="bspan">Default Grid Size <input id="sett_gSize" style="width: 20px" class="input"
+                        type="number" placeholder="Size" value="50"></span>
+                <span class="bspan">Rectangle Opacity <input id="sett_oOpacity" style="width: 20px" class="input"
+                        type="number" placeholder="Size" value="1"></span>
+                <span class="bspan"><input id="sett_relExport" type="checkbox">Position from center</span>
+                <span class="bspan"><input id="sett_relSize" type="checkbox">Size based on grid</span>
+                <span class="bspan"><input id="sett_groupCoords" type="checkbox">Group coordinates</span>
+                <span class="bspan"><input id="sett_askReload" type="checkbox">Ask before reloading</span>
+                <button class="button" onclick="window.settings.reset()">Reset settings</button>
+            </div>
+            <button class="collapsible">Zoom</button>
+            <div class="content cflex">
+                <div>
+                    <button class="button" style="width: 30px; height: 30px;"
+                        onclick="document.body.style.zoom = parseFloat(document.body.style.zoom) - 0.1">-</button>
+                    <button class="button" style="width: 30px; height: 30px;"
+                        onclick="document.body.style.zoom = parseFloat(document.body.style.zoom) + 0.1">+</button>
+                </div>
+            </div>
+            <button class="collapsible">Rotation</button>
+            <div class="content cflex">
+                <span class="bspan"><input id="sett_snapRotation" type="checkbox">Snap Rotation</span>
+                <span class="bspan">Rotation Snap Amount</span>
+                <input id="sett_snapRadius" class="input" type="text" placeholder="Value in Degrees">
+            </div>
+        </div>
+    </div>
+    <div id="info" class="menu border">
+        <span class="menu-title">Information</span>
+        <div class="menu-info">
+            <button class="collapsible open">Version 1.5.0</button>
+            <div class="content scroll">
+                <span class="bspan title">1.5.0</span>
+                <span class="bspan spar spad">
+                    - Introducing Props (W.I.P.) <br>
+                    - You can add various images to your buildings <br>
+                    - Both the types and props used are saved in your json
+                </span>
+                <span class="bspan title">1.4.4</span>
+                <span class="bspan spar spad">
+                    - Revamped Menu <br>
+                    - Version History (this) <br>
+                    - Removed References <br>
+                    - Collapsibles
+                </span>
+                <span class="bspan title">1.4.3</span>
+                <span class="bspan spar spad">
+                    - Idk old shit can't bother
+                </span>
+            </div>
+            <button class="collapsible">Ruleset</button>
+            <div class="content">
+                <span class="bspan par">
+                    blue = collide all<br>
+                    green = collide bullet only<br>
+                    red = collide all except bullets
+                </span>
+            </div>
+            <button class="collapsible">Bindings</button>
+            <div class="content scroll">
+                <span class="bspan spar">
+                    Right-click on shape/prop to remove <br><br>
+                    Hold Alt to move and resize by half a grid size<br><br>
+                    Press R to add a rectangle at the mouse position<br><br>
+                    Press Q and E to cycle between rectangle type
+                </span>
+            </div>
+            <button class="collapsible">Props</button>
+            <div class="content scroll">
+                <span class="bspan spar">
+                    You can add props to your project by using the props tab <br><br>
+                    You need to add a prop type, consisting of a name and an url for the image source, to be able to add
+                    it to the scene <br><br>
+                    Props and prop types are saved to your json <br><br>
+                    You cannot resize props, you may only move and rotate them 90 Degrees <br><br>
+                    You may select props by holding Control
+                </span>
+            </div>
+            <span class="title bspan">Credits</span>
+            <span class="bspan">Alez - doing everything</span>
+        </div>
+    </div>
+</body>
+
+</html>
